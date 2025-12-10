@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="author" content="AYOMIDE">
+    <meta name="description" content="Calculate your grades with precision.">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CGPA Calculator</title>
+
+    <link rel="icon" href="cgpa icon.png" type="image/x-icon">
+    
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="main.css">
+</head>
+<body>
+
+    <section class="hero-section">
+        <div class="glass-container">
+            <h1 class="hero-title">CGPA<br><span>CALCULATOR</span></h1>
+            <p class="hero-subtitle">Calculate your grades with precision.</p>
+            
+            <button id="startBtn" class="start-btn">Get Started</button>
+        </div>
+    </section>
+
+    <div id="calculator-section" class="calculator-section">
+        
+        <div class="glass-container dashboard-container">
+            
+            <div class="toggle-wrapper">
+                <p class="section-label">Select Grading System</p>
+                
+                <div class="toggle-bg">
+                    <button class="toggle-btn active" data-value="5">5.0 Scale</button>
+                    <button class="toggle-btn" data-value="4">4.0 Scale</button>
+                </div>
+            </div>
+
+            <p id="dashboardError" class="error-msg">No valid input given</p>
+
+            <div class="stats-grid">
+                
+                <div class="stat-tile">
+                    <label for="currentCgpa">Current CGPA</label>
+                    <input type="number" id="currentCgpa" placeholder="0.00" step="0.01">
+                </div>
+
+                <div class="stat-tile">
+                    <label for="totalUnits">Total Previous Units</label>
+                    <input type="number" id="totalUnits" placeholder="0" inputmode="numeric">
+                </div>
+
+            </div>
+            
+            <p class="input-guide">For fresh students, enter 0 for both.</p>
+
+        </div>
+        
+        <div class="glass-container course-card">
+            
+            <h3 class="mobile-course-title">Enter Course Details</h3>
+
+            <div class="course-header">
+                <span>Course</span>
+                <span>Course Units</span>
+                <span>Grade</span>
+                <span></span> 
+            </div>
+
+            <div id="courseListContainer" class="course-list-container">
+                </div>
+
+            <div class="action-buttons">
+                <button id="addCourseBtn" class="add-btn">+ Add Course</button>
+                <button id="calculateBtn" class="calc-btn">
+                    <span class="btn-text">Calculate Score</span>
+                    <div class="loader-dots">
+                        <span></span><span></span><span></span>
+                    </div>
+                </button>
+            </div>
+        </div>
+
+        <div class="glass-container summary-card">
+            <h3 class="summary-title">Academic Summary:</h3>
+            
+            <div class="summary-grid">
+                <div class="summary-item">
+                    <span class="label">GPA</span>
+                    <span id="resultGpa" class="value">0.00</span>
+                </div>
+                <div class="summary-item">
+                    <span class="label">CGPA</span>
+                    <span id="resultCgpa" class="value">0.00</span>
+                </div>
+                <div class="summary-item full-width">
+                    <span class="label">Class of Degree</span>
+                    <span id="resultClass" class="value">-</span>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <footer>
+        <p>&copy; 2025 SUPREME TECH, All rights reserved.</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
