@@ -293,4 +293,18 @@ if (calculateBtn) {
         updateAllPlaceholders();
     });
 
+    // ==========================================
+    // 6. UTILITY: BLOCK INVALID KEYS (e, E, +, -)
+    // ==========================================
+    // This blocks the "e" key globally for all number inputs (including new ones)
+    document.addEventListener('keydown', function(event) {
+        // Only run if the user is typing in a number box
+        if (event.target.type === 'number') {
+            // If the key is e, E, +, or - stop it instantly
+            if (['e', 'E', '+', '-'].includes(event.key)) {
+                event.preventDefault();
+            }
+        }
+    });
+
 }); // END OF DOMContentLoaded

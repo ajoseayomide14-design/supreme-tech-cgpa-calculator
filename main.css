@@ -468,3 +468,14 @@ footer {
     75% { transform: translateX(-5px); }
     100% { transform: translateX(0); }
 }
+
+/* --- SCALE GUIDE LABEL --- */
+.scale-guide-label {
+    font-size: 0.75rem;       /* Small text */
+    color: #D7CCC8;           /* Light Brown (matches input labels) */
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-weight: 600;
+    margin-bottom: 10px;      /* Space between text and buttons */
+    margin-top: -5px;         /* Pulls it slightly closer to the title */
+}
