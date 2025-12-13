@@ -530,7 +530,7 @@ footer {
 
 /* NEW: The Mobile "Press" Effect */
 .reset-btn:active {
-    transform: scale(0.8); /* Shrinks slightly when tapped */
+    transform: scale(0.9); /* Shrinks slightly when tapped */
     background: rgba(255, 255, 255, 0.1);
     border-color: rgba(255, 255, 255, 0.5);
 }
@@ -552,3 +552,4 @@ button {
     margin-top: -5px; /* Pushes the icon down slightly */
 
 }
+
