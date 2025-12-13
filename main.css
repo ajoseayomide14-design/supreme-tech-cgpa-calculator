@@ -479,3 +479,75 @@ footer {
     margin-bottom: 10px;      /* Space between text and buttons */
     margin-top: -5px;         /* Pulls it slightly closer to the title */
 }
+
+/* --- RESULT ACTION BUTTONS --- */
+.result-actions {
+    display: flex;
+    flex-direction: column; 
+    gap: 15px;              
+    margin-top: 25px;       
+    width: 100%;
+}
+
+/* 1. The Download Button (Premium/Solid) */
+.download-btn {
+    background-color: #FFFFFF;
+    color: #3E2723;         
+    border: none;
+    padding: 15px;
+    border-radius: 50px;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    
+    /* NEW: Flexbox to align Icon + Text */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px; /* Space between icon and text */
+}
+
+.download-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+    background-color: #F5F5F5;
+}
+
+/* 2. The Reset Button (Subtle/Outline) */
+.reset-btn {
+    background-color: transparent;
+    color: rgba(255, 255, 255, 0.7);
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    padding: 12px;
+    border-radius: 50px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease; /* Faster transition for button press */
+}
+
+/* NEW: The Mobile "Press" Effect */
+.reset-btn:active {
+    transform: scale(0.95); /* Shrinks slightly when tapped */
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.5);
+}
+
+.reset-btn:hover {
+    border-color: #ff5252;  
+    color: #ff5252;         
+}
+
+/* --- MOBILE FIXES & ICON ALIGNMENT --- */
+
+/* 1. Remove the grey "tap box" on mobile so the shrink effect shows clearly */
+button {
+    -webkit-tap-highlight-color: transparent;
+}
+
+/* 2. Nudge the Download Icon down to align with the text baseline */
+.download-btn svg {
+    margin-top: -5px; /* Pushes the icon down slightly */
+}

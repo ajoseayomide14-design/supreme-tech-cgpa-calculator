@@ -307,4 +307,55 @@ if (calculateBtn) {
         }
     });
 
+    // ==========================================
+    // 7. RESULT ACTIONS (Reset & Download)
+    // ==========================================
+
+    // --- RESET BUTTON LOGIC ---
+    const resetBtn = document.getElementById('resetBtn');
+    if (resetBtn) {
+        resetBtn.addEventListener('click', () => {
+            // 1. Clear Dashboard Inputs
+            const cgpaInput = document.getElementById('currentCgpa');
+            const unitsInput = document.getElementById('totalUnits');
+            if(cgpaInput) cgpaInput.value = '';
+            if(unitsInput) unitsInput.value = '';
+
+            // 2. Reset Results Text
+            if(resultGpa) resultGpa.innerText = '0.00';
+            if(resultCgpa) resultCgpa.innerText = '0.00';
+            if(resultClass) resultClass.innerText = '-';
+
+            // 3. Clear Course List (Destroy all, create 1 fresh row)
+            courseListContainer.innerHTML = ''; 
+            addCourseRow(); // Add one fresh empty row
+
+            // 4. Scroll to Academic Profile (Robust Fix)
+            // We target the toggle wrapper because that is where "ACADEMIC PROFILE" text is
+            const profileSection = document.querySelector('.toggle-wrapper');
+            
+            if (profileSection) {
+                profileSection.scrollIntoView({ 
+                    behavior: 'smooth', 
+                    block: 'center' // Puts the section in the middle of the screen
+                });
+            } else {
+                // Fallback: Scroll to very top if section not found
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+
+            // Note: We intentionally DO NOT reset 'currentScale'. 
+            // The user stays on their selected scale (5.0 or 4.0).
+        });
+    }
+
+    // --- DOWNLOAD BUTTON (Placeholder) ---
+    const downloadBtn = document.getElementById('downloadBtn');
+    if (downloadBtn) {
+        downloadBtn.addEventListener('click', () => {
+            // We will add the PDF logic here in the next step
+            console.log("Download clicked - Ready for PDF logic");
+        });
+    }
+
 }); // END OF DOMContentLoaded
