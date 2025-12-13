@@ -525,19 +525,29 @@ footer {
     font-size: 0.9rem;
     font-weight: 600;
     cursor: pointer;
-    transition: all 0.2s ease; /* Faster transition for button press */
+    transition: all 0.2s ease;
+    /* Prevent text selection during press */
+    user-select: none; 
 }
 
-/* NEW: The Mobile "Press" Effect */
+/* --- MOBILE & PRESS BEHAVIOR (The "Active" State) --- */
+/* When you tap/click, it shrinks AND turns Red immediately */
 .reset-btn:active {
-    transform: scale(0.9); /* Shrinks slightly when tapped */
-    background: rgba(255, 255, 255, 0.1);
-    border-color: rgba(255, 255, 255, 0.5);
+    transform: scale(0.93);          /* Shrink Effect */
+    border-color: #ff5252;           /* Red Border */
+    color: #ff5252;                  /* Red Text */
+    background: rgba(255, 82, 82, 0.1); /* Slight Red Tint */
 }
 
-.reset-btn:hover {
-    border-color: #ff5252;  
-    color: #ff5252;         
+/* --- PC MOUSE BEHAVIOR (The "Hover" State) --- */
+/* This @media rule ensures Hover only happens on devices that actually have a mouse.
+   This fixes the "Stuck Red Border" bug on mobile phones. */
+@media (hover: hover) {
+    .reset-btn:hover {
+        border-color: #ff5252;
+        color: #ff5252;
+        background: rgba(255, 82, 82, 0.05);
+    }
 }
 
 /* --- MOBILE FIXES & ICON ALIGNMENT --- */
@@ -550,6 +560,4 @@ button {
 /* 2. Nudge the Download Icon down to align with the text baseline */
 .download-btn svg {
     margin-top: -5px; /* Pushes the icon down slightly */
-
 }
-
