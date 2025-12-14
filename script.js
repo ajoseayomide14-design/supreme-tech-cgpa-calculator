@@ -1,3 +1,5 @@
+// GLOBAL FLAG: Tracks if a valid calculation has happened
+let isScoreCalculated = false;
 document.addEventListener('DOMContentLoaded', () => {
     
     // ==========================================
@@ -53,8 +55,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (cgpaInput) {
         cgpaInput.addEventListener('input', function() {
-            if (this.value.length > 5) {
-                this.value = this.value.slice(0, 5); 
+            if (this.value.length > 4) {
+                this.value = this.value.slice(0, 4); 
             }
         });
     }
@@ -94,6 +96,63 @@ document.addEventListener('DOMContentLoaded', () => {
 
         courseListContainer.appendChild(row);
     }
+
+    // ==========================================
+    // HELPER: AUTO-LOCK SYSTEM
+    // ==========================================
+    
+    // Function to lock the download (Turn switch OFF)
+    function lockDownloadResult() {
+        isScoreCalculated = false;
+        // Optional: You could visually dim the button here if you wanted, 
+        // but we are sticking to the "Shake on Click" method.
+    }
+
+    // 1. Watch Dashboard Inputs (CGPA & Total Units)
+    const dashboardInputs = [document.getElementById('currentCgpa'), document.getElementById('totalUnits')];
+    dashboardInputs.forEach(input => {
+        if(input) {
+            input.addEventListener('input', lockDownloadResult);
+        }
+    });
+
+    // 2. Watch Course Inputs (Delegation for Dynamic Rows)
+    // We listen to the whole container, but filter what we care about.
+    if (courseListContainer) {
+        courseListContainer.addEventListener('input', function(e) {
+            // IGNORE Course Names (Text inputs)
+            if (e.target.type === 'text') return;
+
+            // LOCK if it's Units (number) or Grade (select)
+            if (e.target.type === 'number' || e.target.tagName === 'SELECT') {
+                lockDownloadResult();
+            }
+        });
+        
+        // Also Lock if a row is Deleted
+        courseListContainer.addEventListener('click', function(e) {
+            if (e.target.closest('.delete-btn')) {
+                lockDownloadResult();
+            }
+        });
+    }
+
+    // 3. Watch "Add Course" Button
+    if (addCourseBtn) {
+        addCourseBtn.addEventListener('click', lockDownloadResult);
+    }
+
+    // ==========================================
+    // ==========================================
+    // 4. NEW: Watch Grading Scale Toggle (Updated for your Buttons)
+    // ==========================================
+    // We select all buttons with the class "toggle-btn"
+    const toggleButtons = document.querySelectorAll('.toggle-btn');
+    
+    // Add a listener to EACH button
+    toggleButtons.forEach(btn => {
+        btn.addEventListener('click', lockDownloadResult);
+    });
 
     // Add one row immediately when page loads
     if (courseListContainer) {
@@ -213,6 +272,15 @@ if (calculateBtn) {
                 if(resultGpa) resultGpa.innerText = semesterGpa.toFixed(2);
                 if(resultCgpa) resultCgpa.innerText = finalCgpa.toFixed(2);
                 if(resultClass) resultClass.innerText = getClassOfDegree(finalCgpa, currentScale);
+
+                // [ADD THIS NEW LINE HERE]:
+                isScoreCalculated = true; // <--- The Lock is now OPEN
+
+                // [EXISTING CODE] ... update UI text ...
+            
+            // Clear any previous error messages
+            if(dashboardError) dashboardError.classList.remove('show');
+            
 
                 // Stop Animation
                 loader.style.display = 'none';
@@ -346,6 +414,9 @@ if (calculateBtn) {
                     window.scrollTo({ top: 0, behavior: 'smooth' });
                 }
 
+                // [ADD THIS NEW LINE HERE]:
+                isScoreCalculated = false; // <--- The Lock is CLOSED again
+
             }, 300); // <-- The code waits here for 300ms
         });
     }
@@ -353,13 +424,100 @@ if (calculateBtn) {
             // Note: We intentionally DO NOT reset 'currentScale'. 
             // The user stays on their selected scale (5.0 or 4.0).
 
-    // --- DOWNLOAD BUTTON (Placeholder) ---
+    // ==========================================
+    // 8. PDF DOWNLOAD FLOW & MODAL LOGIC (UPDATED)
+    // ==========================================
+
     const downloadBtn = document.getElementById('downloadBtn');
+    const pdfModal = document.getElementById('pdfModal');
+    const closeModalBtn = document.getElementById('closeModalBtn');
+    const generatePdfBtn = document.getElementById('generatePdfBtn');
+    
+    // --- PART A: OPEN MODAL (With Proximity Feedback) ---
     if (downloadBtn) {
         downloadBtn.addEventListener('click', () => {
-            // We will add the PDF logic here in the next step
-            console.log("Download clicked - Ready for PDF logic");
+            
+            // GATEKEEPER: Check the Flag
+            if (!isScoreCalculated) {
+                // 1. Shake the Button
+                downloadBtn.classList.add('shake-effect');
+                setTimeout(() => downloadBtn.classList.remove('shake-effect'), 400);
+
+                // 2. Show FEEDBACK (Right above the button)
+                const feedbackMsg = document.getElementById('downloadFeedback');
+                if(feedbackMsg) {
+                    feedbackMsg.innerText = "Please Calculate Score.";
+                    feedbackMsg.classList.add('show');
+
+                    // Hide automatically after 3 seconds
+                    setTimeout(() => {
+                        feedbackMsg.classList.remove('show');
+                    }, 2000);
+                }
+
+                return; // STOP HERE
+            }
+
+            // IF UNLOCKED: Show Brown Loader & Open Modal
+            const originalContent = downloadBtn.innerHTML; 
+            downloadBtn.innerHTML = '<div class="loader-spinner brown-loader" style="display:block"></div>'; 
+            
+            setTimeout(() => {
+                downloadBtn.innerHTML = originalContent; 
+                pdfModal.classList.add('active'); 
+            }, 800);
         });
     }
+
+    // --- PART B: CLOSE MODAL LOGIC ---
+    if (closeModalBtn) {
+        closeModalBtn.addEventListener('click', () => {
+            pdfModal.classList.remove('active');
+        });
+    }
+    // Close when clicking outside
+    window.addEventListener('click', (e) => {
+        if (e.target === pdfModal) pdfModal.classList.remove('active');
+    });
+
+    // --- PART C: GENERATE PDF BUTTON (With Auto-Clear Error) ---
+    if (generatePdfBtn) {
+        generatePdfBtn.addEventListener('click', () => {
+            const nameInput = document.getElementById('studentName');
+            
+            // 1. Validate Name
+            if (!nameInput.value.trim()) {
+                // Show Red Error
+                nameInput.style.borderColor = '#ff5252'; 
+                
+                // AUTO-CLEAR: Remove Red Border after 1 second
+                setTimeout(() => {
+                    nameInput.style.borderColor = '#E0E0E0'; // Back to grey
+                }, 1000);
+
+                return;
+            } 
+
+            // 2. Show Loader (White spinner on Dark Button)
+            const btnText = generatePdfBtn.querySelector('.btn-text');
+            const loader = generatePdfBtn.querySelector('.loader-spinner');
+            
+            btnText.style.display = 'none';
+            loader.style.display = 'block'; // This uses the default white loader style
+
+            // 3. Wait 3 Seconds (Simulate PDF Generation)
+            setTimeout(() => {
+                console.log("PDF Generated!"); // Placeholder for download logic
+
+                // Reset Button
+                loader.style.display = 'none';
+                btnText.style.display = 'block';
+                
+                // Close Modal
+                pdfModal.classList.remove('active');
+                
+            }, 3000); // Wait 3 seconds
+        });
+    } 
 
 }); // END OF DOMContentLoaded

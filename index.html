@@ -103,6 +103,9 @@
             </div>
 
             <div class="result-actions">
+                
+                <div id="downloadFeedback" class="download-feedback-text"></div>
+
                 <button id="downloadBtn" class="download-btn">Download Result
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
@@ -122,6 +125,41 @@
     <footer>
         <p>&copy; 2025 SUPREME TECH, All rights reserved.</p>
     </footer>
+
+    <div id="pdfModal" class="modal-overlay">
+        <div class="modal-card">
+            
+            <div class="modal-header">
+                <h3 class="modal-title">Student Details</h3>
+                <button id="closeModalBtn" class="close-icon-btn">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Full Name <span style="color:red">*</span></label>
+                    <input type="text" id="studentName" class="modal-input" placeholder="Enter your full name">
+                </div>
+                
+                <div class="form-group">
+                    <label>Department (Course of Study)</label>
+                    <input type="text" id="studentDept" class="modal-input" placeholder="e.g. Computer Science (Optional)">
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button id="generatePdfBtn" class="generate-btn">
+                    <span class="btn-text">Generate PDF</span>
+                    <div class="loader-spinner"></div>
+                </button>
+            </div>
+
+        </div>
+    </div>
 
     <script src="script.js"></script>
 </body>
