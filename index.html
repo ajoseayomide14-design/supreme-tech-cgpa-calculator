@@ -161,6 +161,125 @@
         </div>
     </div>
 
+    <div id="previewModal" class="modal-overlay">
+        <div class="modal-card preview-card">
+            
+            <div class="modal-header">
+                <h3 class="modal-title">Result Preview</h3>
+                <button id="closePreviewBtn" class="close-icon-btn">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+
+            <div class="modal-body scrollable-body">
+                <div id="pdf-content" class="paper-sheet">
+                    
+                    <div class="pdf-header">
+                        <div class="header-logo-left">
+                            <svg width="50" height="50" viewBox="0 0 24 24" fill="none" stroke="#3E2723" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M22 10v6M2 10v6"></path>
+                                <path d="M2 10l10-5 10 5-10 5z"></path>
+                                <path d="M12 12v9"></path>
+                            </svg>
+                        </div>
+
+                        <div class="header-text">
+                            <h1 class="brand-title">SUPREME TECH</h1>
+                            <h2 class="doc-title">CGPA CALCULATOR RESULT</h2>
+                        </div>
+
+                        <div class="header-logo-right">
+                            <svg width="50" height="50" viewBox="0 0 24 24" fill="none" stroke="#3E2723" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="4" y="2" width="16" height="20" rx="2"></rect>
+                                <line x1="8" y1="6" x2="16" y2="6"></line>
+                                <line x1="16" y1="14" x2="16" y2="18"></line>
+                                <path d="M8 10h.01"></path>
+                                <path d="M12 10h.01"></path>
+                                <path d="M16 10h.01"></path>
+                                <path d="M8 14h.01"></path>
+                                <path d="M12 14h.01"></path>
+                                <path d="M8 18h.01"></path>
+                                <path d="M12 18h.01"></path>
+                            </svg>
+                        </div>
+                    </div>
+
+                    <div class="pdf-section">
+                        <div class="section-box">
+                            <h3 class="box-title">STUDENT PROFILE</h3>
+                            <div class="profile-grid">
+                                <div class="profile-item">
+                                    <span class="label">FULL NAME:</span>
+                                    <span id="pdfName" class="value">--</span>
+                                </div>
+                                <div class="profile-item">
+                                    <span class="label">DEPARTMENT:</span>
+                                    <span id="pdfDept" class="value">--</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="pdf-section">
+                        <div class="section-box">
+                            <h3 class="box-title">ACADEMIC SUMMARY</h3>
+                            
+                            <div class="pdf-summary-grid">
+                                <div class="grid-head">PREVIOUS STATUS</div>
+                                <div class="grid-head">CURRENT SEMESTER</div>
+                                <div class="grid-head highlight">CUMULATIVE RESULT</div>
+
+                                <div class="grid-data">Prev. CGPA: <b id="pdfPrevCgpa">0.00</b></div>
+                                <div class="grid-data">Sem. GPA: <b id="pdfSemGpa">0.00</b></div>
+                                <div class="grid-data highlight-data">Final CGPA: <b id="pdfFinalCgpa">0.00</b></div>
+
+                                <div class="grid-data">Prev. Units: <b id="pdfPrevUnits">0</b></div>
+                                <div class="grid-data">Sem. Units: <b id="pdfSemUnits">0</b></div>
+                                <div class="grid-data highlight-data">Total Units: <b id="pdfTotalUnits">0</b></div>
+                            </div>
+
+                            <div class="verdict-banner">
+                                CLASS OF DEGREE: <span id="pdfClass">--</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="pdf-section">
+                        <table class="course-table">
+                            <thead>
+                                <tr>
+                                    <th style="width: 40%;">COURSE CODE</th>
+                                    <th style="width: 20%;">UNITS</th>
+                                    <th style="width: 20%;">GRADE</th>
+                                    <th style="width: 20%;">POINT</th>
+                                </tr>
+                            </thead>
+                            <tbody id="pdfCourseList">
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="pdf-footer">
+                        <p>Generated on <span id="pdfDate">--</span></p>
+                        <p>Powered by SUPREME TECH</p>
+                    </div>
+
+                </div>
+                </div>
+
+            <div class="modal-footer">
+                <button id="finalDownloadBtn" class="generate-btn">
+                    <span class="btn-text">Save to Device</span>
+                    <div class="loader-spinner"></div>
+                </button>
+            </div>
+
+        </div>
+    </div>
+
     <script src="script.js"></script>
 </body>
 </html>

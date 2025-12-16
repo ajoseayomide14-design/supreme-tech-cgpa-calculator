@@ -756,3 +756,214 @@ button {
     opacity: 1;              /* Fades in */
     margin-bottom: 5px;      /* Spacing above button */
 }
+
+
+/* =========================================
+   PDF PREVIEW STYLES (The "Paper" Look)
+   ========================================= */
+
+/* 1. Modal Adjustments */
+.preview-card {
+    width: 95%;
+    max-width: 900px; /* Wider to fit the paper */
+    height: 90vh; /* Takes up most of the screen height */
+    display: flex;
+    flex-direction: column;
+}
+
+.scrollable-body {
+    background: #555; /* Dark background behind the paper */
+    overflow: auto;   /* Allows scrolling in all directions */
+    padding: 20px;
+    flex: 1;          /* Fills the space */
+    display: flex;
+    justify-content: center; /* Centers the paper */
+}
+
+/* 2. The Paper Sheet (Fixed A4-ish Style) */
+.paper-sheet {
+    width: 800px;     /* FIXED WIDTH: This mimics real paper. Do not change. */
+    min-width: 800px; /* Prevents shrinking on mobile */
+    background: white;
+    padding: 40px;
+    font-family: 'Times New Roman', Times, serif; 
+    color: #000;
+    box-shadow: 0 0 20px rgba(0,0,0,0.5); /* Shadow makes it pop */
+    margin: auto;
+}
+
+/* 3. Paper Internals (Same as before) */
+.pdf-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 3px double #3E2723;
+    padding-bottom: 20px;
+    margin-bottom: 30px;
+}
+
+.header-text { text-align: center; }
+
+.brand-title {
+    font-size: 1.8rem;
+    color: #3E2723;
+    margin: 0;
+    font-weight: 800;
+    letter-spacing: 1px;
+}
+
+.doc-title {
+    font-size: 1rem;
+    color: #555;
+    margin: 5px 0 0 0;
+    text-transform: uppercase;
+    font-family: sans-serif;
+    letter-spacing: 2px;
+}
+
+.section-box {
+    border: 1px solid #3E2723;
+    margin-bottom: 25px;
+}
+
+.box-title {
+    background: #3E2723;
+    color: white;
+    text-align: center;
+    padding: 8px;
+    margin: 0;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    font-family: sans-serif;
+    letter-spacing: 1px;
+}
+
+.profile-grid {
+    padding: 15px;
+    display: flex;
+    justify-content: space-around;
+    font-family: sans-serif;
+}
+
+.profile-item .label {
+    font-weight: bold;
+    color: #555;
+    font-size: 0.8rem;
+    margin-right: 5px;
+}
+
+.profile-item .value {
+    font-weight: bold;
+    font-size: 1rem;
+    color: #000;
+    text-transform: uppercase;
+}
+
+/* Summary Grid */
+.pdf-summary-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    text-align: center;
+    border-bottom: 1px solid #ccc;
+}
+
+.grid-head {
+    background: #f0f0f0;
+    padding: 8px;
+    font-size: 0.7rem;
+    font-weight: bold;
+    border-right: 1px solid #ccc;
+    font-family: sans-serif; 
+}
+
+.grid-data {
+    padding: 10px;
+    font-size: 0.9rem;
+    border-right: 1px solid #eee;
+    font-family: sans-serif;
+}
+
+.highlight { background: #3E2723; color: white; border-color: #3E2723; }
+.highlight-data { background: #fff8e1; }
+
+.verdict-banner {
+    text-align: center;
+    padding: 10px;
+    background: #eceff1;
+    font-weight: bold;
+    font-family: sans-serif;
+    font-size: 0.9rem;
+    color: #3E2723;
+}
+
+.course-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 30px;
+    font-family: sans-serif;
+}
+
+.course-table th {
+    background: #3E2723;
+    color: white;
+    padding: 10px;
+    font-size: 0.8rem;
+    text-align: left;
+}
+
+.course-table td {
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+    font-size: 0.9rem;
+}
+
+.course-table tbody tr:nth-child(even) { background-color: #f9f9f9; }
+
+.pdf-footer {
+    text-align: center;
+    font-size: 0.7rem;
+    color: #777;
+    margin-top: 50px;
+    border-top: 1px solid #ddd;
+    padding-top: 10px;
+    font-family: sans-serif;
+}
+
+/* =========================================
+   NATIVE PRINT STYLES (The "Clean Print")
+   ========================================= */
+@media print {
+    /* 1. Hide EVERYTHING on the page */
+    body * {
+        visibility: hidden;
+    }
+
+    /* 2. Show ONLY the Paper Sheet */
+    #pdf-content, #pdf-content * {
+        visibility: visible;
+    }
+
+    /* 3. Position the paper to fill the printed page */
+    #pdf-content {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        margin: 0;
+        padding: 20px; /* Optional: adds a little breathing room */
+        box-shadow: none; /* Remove shadow for print */
+        background: white;
+    }
+
+    /* 4. Hide the Preview Modal UI (Close button, Save button) */
+    .modal-header, .modal-footer, .preview-card {
+        background: none;
+        border: none;
+        box-shadow: none;
+    }
+    
+    /* Ensure scrollbars don't print */
+    .scrollable-body {
+        overflow: visible;
+    }
+}

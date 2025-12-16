@@ -480,44 +480,92 @@ if (calculateBtn) {
         if (e.target === pdfModal) pdfModal.classList.remove('active');
     });
 
-    // --- PART C: GENERATE PDF BUTTON (With Auto-Clear Error) ---
+    // ===============================================
+    // PART C: PDF PREVIEW & NATIVE PRINT SYSTEM
+    // ===============================================
+
+    const previewModal = document.getElementById('previewModal');
+    const closePreviewBtn = document.getElementById('closePreviewBtn');
+    const finalDownloadBtn = document.getElementById('finalDownloadBtn');
+
+    // 1. OPEN PREVIEW (Transfer Data to Paper)
     if (generatePdfBtn) {
         generatePdfBtn.addEventListener('click', () => {
             const nameInput = document.getElementById('studentName');
+            const deptInput = document.getElementById('studentDept');
             
-            // 1. Validate Name
+            // Validation
             if (!nameInput.value.trim()) {
-                // Show Red Error
                 nameInput.style.borderColor = '#ff5252'; 
-                
-                // AUTO-CLEAR: Remove Red Border after 1 second
-                setTimeout(() => {
-                    nameInput.style.borderColor = '#E0E0E0'; // Back to grey
-                }, 1000);
-
+                setTimeout(() => nameInput.style.borderColor = '#E0E0E0', 3000);
                 return;
             } 
 
-            // 2. Show Loader (White spinner on Dark Button)
-            const btnText = generatePdfBtn.querySelector('.btn-text');
-            const loader = generatePdfBtn.querySelector('.loader-spinner');
+            // -- FILL THE PAPER (DATA TRANSFER) --
+            document.getElementById('pdfName').innerText = nameInput.value;
+            document.getElementById('pdfDept').innerText = deptInput.value || "N/A";
+            document.getElementById('pdfDate').innerText = new Date().toLocaleString();
+
+            const prevUnits = parseFloat(document.getElementById('totalUnits').value) || 0;
+            const prevCgpa = parseFloat(document.getElementById('currentCgpa').value) || 0;
             
-            btnText.style.display = 'none';
-            loader.style.display = 'block'; // This uses the default white loader style
+            let currentSemUnits = 0;
+            // Loop inputs to get total units
+            document.querySelectorAll('.course-row').forEach(row => {
+                 currentSemUnits += parseFloat(row.querySelectorAll('input')[1].value) || 0;
+            });
 
-            // 3. Wait 3 Seconds (Simulate PDF Generation)
-            setTimeout(() => {
-                console.log("PDF Generated!"); // Placeholder for download logic
+            document.getElementById('pdfPrevCgpa').innerText = prevCgpa.toFixed(2);
+            document.getElementById('pdfPrevUnits').innerText = prevUnits;
+            document.getElementById('pdfSemGpa').innerText = document.getElementById('resultGpa').innerText;
+            document.getElementById('pdfSemUnits').innerText = currentSemUnits;
+            document.getElementById('pdfFinalCgpa').innerText = document.getElementById('resultCgpa').innerText;
+            document.getElementById('pdfTotalUnits').innerText = prevUnits + currentSemUnits;
+            document.getElementById('pdfClass').innerText = document.getElementById('resultClass').innerText.toUpperCase();
 
-                // Reset Button
-                loader.style.display = 'none';
-                btnText.style.display = 'block';
-                
-                // Close Modal
-                pdfModal.classList.remove('active');
-                
-            }, 3000); // Wait 3 seconds
+            // Fill Table
+            const tableBody = document.getElementById('pdfCourseList');
+            tableBody.innerHTML = ''; 
+            const isScale5 = document.querySelector('.toggle-btn[data-value="5"]').classList.contains('active');
+            
+            document.querySelectorAll('.course-row').forEach(row => {
+                const inputs = row.querySelectorAll('input');
+                const code = inputs[0].value || "---";
+                const unit = inputs[1].value || "0";
+                const grade = inputs[2] ? inputs[2].value.toUpperCase() : "-";
+
+                let point = 0;
+                if (grade === 'A') point = isScale5 ? 5 : 4;
+                if (grade === 'B') point = isScale5 ? 4 : 3;
+                if (grade === 'C') point = isScale5 ? 3 : 2;
+                if (grade === 'D') point = isScale5 ? 2 : 1;
+                if (grade === 'E') point = isScale5 ? 1 : 0; 
+                if (grade === 'F') point = 0;
+
+                const tr = document.createElement('tr');
+                tr.innerHTML = `<td>${code.toUpperCase()}</td><td>${unit}</td><td>${grade}</td><td>${point}</td>`;
+                tableBody.appendChild(tr);
+            });
+
+            // -- SWITCH MODALS --
+            pdfModal.classList.remove('active'); // Close Input Modal
+            previewModal.classList.add('active'); // Open Preview Modal
         });
-    } 
+    }
+
+    // 2. CLOSE PREVIEW
+    if (closePreviewBtn) {
+        closePreviewBtn.addEventListener('click', () => {
+            previewModal.classList.remove('active');
+        });
+    }
+
+    // 3. FINAL PRINT ACTION (The Native Browser Print)
+    if (finalDownloadBtn) {
+        finalDownloadBtn.addEventListener('click', () => {
+            // This opens the phone/computer's native print menu
+            window.print(); 
+        });
+    }
 
 }); // END OF DOMContentLoaded
