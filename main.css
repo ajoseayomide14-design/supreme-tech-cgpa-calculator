@@ -759,211 +759,306 @@ button {
 
 
 /* =========================================
-   PDF PREVIEW STYLES (The "Paper" Look)
+   DIRECT PRINT STYLES (Batch 1 Update)
    ========================================= */
 
-/* 1. Modal Adjustments */
-.preview-card {
-    width: 95%;
-    max-width: 900px; /* Wider to fit the paper */
-    height: 90vh; /* Takes up most of the screen height */
-    display: flex;
-    flex-direction: column;
+/* 1. HIDE the Paper on the Website */
+.hidden-print-area {
+    height: 0;
+    overflow: hidden; 
+    visibility: hidden;
 }
 
-.scrollable-body {
-    background: #555; /* Dark background behind the paper */
-    overflow: auto;   /* Allows scrolling in all directions */
-    padding: 20px;
-    flex: 1;          /* Fills the space */
-    display: flex;
-    justify-content: center; /* Centers the paper */
-}
-
-/* 2. The Paper Sheet (Fixed A4-ish Style) */
+/* 2. The Paper Sheet Styling */
 .paper-sheet {
-    width: 800px;     /* FIXED WIDTH: This mimics real paper. Do not change. */
-    min-width: 800px; /* Prevents shrinking on mobile */
-    background: white;
-    padding: 40px;
-    font-family: 'Times New Roman', Times, serif; 
+    width: 100%; 
+    max-width: 800px;
+    margin: 0 auto;
+    font-family: 'Montserrat', sans-serif; /* Clean Standard Font */
     color: #000;
-    box-shadow: 0 0 20px rgba(0,0,0,0.5); /* Shadow makes it pop */
-    margin: auto;
 }
 
-/* 3. Paper Internals (Same as before) */
+/* 3. Internal Paper Styles */
+
+/* HEADER (New Layout with Fancy Font) */
 .pdf-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    border-bottom: 3px double #3E2723;
-    padding-bottom: 20px;
+    padding-bottom: 15px;
     margin-bottom: 30px;
+    display: block;
+}
+
+/* Grouping the Center Text and Right Icon */
+.header-content-wrapper {
+    position: relative;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
 }
 
 .header-text { text-align: center; }
 
 .brand-title {
-    font-size: 1.8rem;
-    color: #3E2723;
+    font-family: 'Montserrat', sans-serif; /* The Fancy Font */
+    font-size: 2.2rem;
+    color: #000;
     margin: 0;
-    font-weight: 800;
-    letter-spacing: 1px;
+    font-weight: 900;
+    letter-spacing: 2px;
+    line-height: 1;
 }
 
 .doc-title {
-    font-size: 1rem;
-    color: #555;
-    margin: 5px 0 0 0;
-    text-transform: uppercase;
-    font-family: sans-serif;
-    letter-spacing: 2px;
-}
-
-.section-box {
-    border: 1px solid #3E2723;
-    margin-bottom: 25px;
-}
-
-.box-title {
-    background: #3E2723;
-    color: white;
-    text-align: center;
-    padding: 8px;
-    margin: 0;
+    font-family: 'Montserrat', sans-serif;
     font-size: 0.9rem;
+    color: #000;
+    margin: 5px 0 0 0;
+    font-weight: 600;
+    letter-spacing: 3px;
     text-transform: uppercase;
-    font-family: sans-serif;
-    letter-spacing: 1px;
 }
 
-.profile-grid {
-    padding: 15px;
+/*logo image size, icon pinning*/
+.header-icon-img {
+    position: absolute;
+    right: 0;
+    bottom: -4px;
+    width: 60px;
+    height: auto;
+}
+
+
+
+/* SECTIONS (Black Borders) */
+.section-box {
+    border: 1px solid #000;
+    margin-bottom: 25px;
+    background: transparent;
+}
+
+/* PASTE YOUR NEW CODE HERE */
+.box-title {
+    color: #000 !important; /* Force Black */
+    font-weight: 900;       /* Extra Bold to prevent "grey" look */
+    font-size: 1.1rem;
+    border-bottom: 1px solid #000;
+    margin: 0;
+    padding: 8px;
+    text-align: center;
+    font-family: 'Montserrat', sans-serif;
+}
+
+/* PROFILE (New Stacked Layout) */
+.profile-stack {
+    padding: 15px 25px;
     display: flex;
-    justify-content: space-around;
-    font-family: sans-serif;
+    flex-direction: column; /* Stacks top to bottom */
+    gap: 15px; 
 }
 
-.profile-item .label {
-    font-weight: bold;
-    color: #555;
-    font-size: 0.8rem;
-    margin-right: 5px;
+.profile-row {
+    border-bottom: 1px solid #ccc; /* Thin line separator */
+    padding-bottom: 5px;
+    display: flex;
+    align-items: baseline;
 }
 
-.profile-item .value {
-    font-weight: bold;
-    font-size: 1rem;
+.profile-row .label {
+    font-weight: 700;
+    color: #000;
+    font-size: 0.85rem;
+    width: 260px; /* Fixed width */
+    flex-shrink: 0;
+}
+
+.profile-row .value {
+    font-weight: 700;
+    font-size: 0.85rem;
     color: #000;
     text-transform: uppercase;
 }
 
-/* Summary Grid */
+/* --- NEW ACADEMIC SUMMARY STYLES --- */
+
+/* The Wrapper */
+.summary-content-wrapper {
+    display: flex;
+    flex-direction: column;
+}
+
+/* The 3-Column Grid */
 .pdf-summary-grid {
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-columns: 1fr 1fr 1fr; /* 3 Equal Columns */
+    padding: 0;
+    border-bottom: 1px solid #000;
+    align-items: stretch;
+}
+
+/* Individual Columns */
+.grid-section {
     text-align: center;
-    border-bottom: 1px solid #ccc;
+    padding: 15px 10px;
 }
 
-.grid-head {
-    background: #f0f0f0;
-    padding: 8px;
-    font-size: 0.7rem;
-    font-weight: bold;
-    border-right: 1px solid #ccc;
-    font-family: sans-serif; 
+/* The Vertical Dividers */
+.border-sides {
+    border-left: 1px solid #000;
+    border-right: 1px solid #000;
 }
 
-.grid-data {
+/* The Labels (Previous, Current...) */
+.grid-label {
+    display: block;
+    font-weight: 700;
+    font-size: 0.85rem;
+    color: #000; /* Keep labels slightly lighter for contrast? Or use #000 for all black */
+    margin-bottom: 8px;
+    text-decoration: none; /*Optional: adds a nice touch */
+}
+
+.grid-value-row {
+    font-weight: 700;
+    font-size: 0.85rem;
+    margin-bottom: 4px;
+    color: #000;
+}
+
+/* THE STAR: Cumulative Section (Bold) */
+.bold-section .grid-label {
+    font-weight: 700;
+    font-size: 0.85rem;
+}
+.bold-section .grid-value-row {
+    font-weight: 800; /* Bold Values */
+    font-size: 0.85rem; /* Slightly bigger */
+}
+
+/* THE VERDICT ROW (Class of Degree) */
+.verdict-row {
+    /* The Thicker Border You Requested */
     padding: 10px;
-    font-size: 0.9rem;
-    border-right: 1px solid #eee;
-    font-family: sans-serif;
-}
-
-.highlight { background: #3E2723; color: white; border-color: #3E2723; }
-.highlight-data { background: #fff8e1; }
-
-.verdict-banner {
+    border-top: 1px solid #000; /* 2px is clearly thicker than 1px */
     text-align: center;
-    padding: 10px;
-    background: #eceff1;
-    font-weight: bold;
-    font-family: sans-serif;
-    font-size: 0.9rem;
-    color: #3E2723;
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    align-items: center;
+    background: #f9f9f9; /* Optional: Very light grey background to separate it */
 }
 
+.verdict-label {
+    font-weight: 700;
+    font-size: 0.85rem;
+}
+
+.verdict-value {
+    font-weight: 800;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+}
+
+/* --- COURSE TABLE (Clean Boxed Layout) --- */
 .course-table {
     width: 100%;
-    border-collapse: collapse;
+    /* This command 'collapse' kills the unnecessary double lines */
+    border-collapse: collapse; 
     margin-bottom: 30px;
-    font-family: sans-serif;
+    font-family: 'Montserrat', sans-serif;
+    
+    /* 1. The Outer Box Border (Like Student Profile) */
+    border: 1px solid #000; 
 }
 
 .course-table th {
-    background: #3E2723;
-    color: white;
-    padding: 10px;
-    font-size: 0.8rem;
-    text-align: left;
+    background: transparent;
+    color: #000;
+    padding: 12px 10px; /* Slightly more breathing room */
+    font-weight: 900;       /* Extra Bold to prevent "grey" look */
+    font-size: 1.0rem;
+    
+    /* 2. The Line Separating Title from Results */
+    border-bottom: 1px solid #000; 
 }
+
+/* 3. Specific Alignment Fix (The "Blue Drawing" Fix) */
+/* Force the 2nd (Units) and 3rd (Grade) headers to Center */
+.course-table th:nth-child(1) { text-align: left; }   
+.course-table th:nth-child(2) { text-align: center; } 
+.course-table th:nth-child(3) { text-align: center; } 
 
 .course-table td {
     padding: 10px;
-    border-bottom: 1px solid #ddd;
-    font-size: 0.9rem;
+    font-weight: 700;
+    font-size: 0.85rem;
+    color: #000;
+    
+    /* 4. The Row Separators (Keep the lines between courses) */
+    border-bottom: 1px solid #000; 
 }
 
-.course-table tbody tr:nth-child(even) { background-color: #f9f9f9; }
+/* 5. Clean Bottom Edge */
+/* Removes the line from the very last row so it doesn't clash with the box border */
+.course-table tbody tr:last-child td {
+    border-bottom: none;
+}
 
+/* FOOTER (Bold & Clean) */
 .pdf-footer {
     text-align: center;
-    font-size: 0.7rem;
-    color: #777;
+    font-size: 0.8rem;
+    color: #000;
     margin-top: 50px;
-    border-top: 1px solid #ddd;
-    padding-top: 10px;
-    font-family: sans-serif;
+    padding-top: 15px;
+    font-weight: 400; /* Made Bold */
 }
 
-/* =========================================
-   NATIVE PRINT STYLES (The "Clean Print")
-   ========================================= */
+.pdf-footer p{
+    margin: 5px 0;
+}
+
+/* --- PRINT PAGE LOGIC (Final Polish) --- */
 @media print {
-    /* 1. Hide EVERYTHING on the page */
-    body * {
-        visibility: hidden;
+    /* 1. Page Setup */
+    @page {
+        /* This hides the Browser Headers (Date, URL, Title, Page #) */
+        margin: 0; 
+        size: auto;
     }
 
-    /* 2. Show ONLY the Paper Sheet */
-    #pdf-content, #pdf-content * {
-        visibility: visible;
+    /* 2. NUCLEAR OPTION: Hide everything on the website */
+    body > *:not(#print-container) {
+        display: none !important;
     }
 
-    /* 3. Position the paper to fill the printed page */
-    #pdf-content {
-        position: absolute;
+    /* 3. Reset Body */
+    html, body {
+        height: auto !important;
+        overflow: visible !important;
+        background: #fff !important;
+        margin: 0 !important; /* Ensure no extra browser margin */
+    }
+
+    /* 4. Show and Position the Paper */
+    #print-container {
+        display: block !important;
+        visibility: visible !important;
+        position: relative !important;
         left: 0;
         top: 0;
         width: 100%;
-        margin: 0;
-        padding: 20px; /* Optional: adds a little breathing room */
-        box-shadow: none; /* Remove shadow for print */
-        background: white;
-    }
-
-    /* 4. Hide the Preview Modal UI (Close button, Save button) */
-    .modal-header, .modal-footer, .preview-card {
-        background: none;
-        border: none;
-        box-shadow: none;
+        height: auto !important;
+        overflow: visible !important;
+        
+        /* THE SAFETY PADDING */
+        /* Since we removed the page margins to hide the date/url, */
+        /* we must add padding here so your text isn't cut off. */
+        padding: 40px; 
+        box-sizing: border-box;
     }
     
-    /* Ensure scrollbars don't print */
-    .scrollable-body {
-        overflow: visible;
+    /* Ensure all internals are visible */
+    #print-container * {
+        visibility: visible !important;
     }
 }

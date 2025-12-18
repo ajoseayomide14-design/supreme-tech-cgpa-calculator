@@ -290,7 +290,7 @@ if (calculateBtn) {
                 const summaryCard = document.querySelector('.summary-card');
                 if (summaryCard) summaryCard.scrollIntoView({ behavior: 'smooth' });
 
-            }, 2000);  // 2000ms = 2 Seconds
+            }, 1000);  // 2000ms = 2 Seconds
         });
     }
 
@@ -480,92 +480,209 @@ if (calculateBtn) {
         if (e.target === pdfModal) pdfModal.classList.remove('active');
     });
 
-    // ===============================================
-    // PART C: PDF PREVIEW & NATIVE PRINT SYSTEM
-    // ===============================================
+   // ==========================================
+// PART C: DIRECT PRINT LOGIC (Calculation Engine)
+// ==========================================
+if (generatePdfBtn) {
+    generatePdfBtn.addEventListener('click', () => {
+        // --- 1. GET SETTINGS & PREVIOUS DATA ---
+        const isScale5 = document.querySelector('.toggle-btn[data-value="5"]').classList.contains('active');
+        
+        // Get Previous Inputs (Default to 0 if empty)
+        const prevCgpaInput = document.getElementById('currentCgpa');
+        const prevUnitsInput = document.getElementById('totalUnits');
+        
+        let prevCgpa = parseFloat(prevCgpaInput.value) || 0;
+        let prevUnits = parseFloat(prevUnitsInput.value) || 0;
+        let prevPoints = prevCgpa * prevUnits;
 
-    const previewModal = document.getElementById('previewModal');
-    const closePreviewBtn = document.getElementById('closePreviewBtn');
-    const finalDownloadBtn = document.getElementById('finalDownloadBtn');
+        // --- 2. CALCULATE CURRENT SEMESTER ---
+        let semUnits = 0;
+        let semPoints = 0;
+        const tableBody = document.getElementById('pdfCourseList');
+        tableBody.innerHTML = ''; // Clear old rows
 
-    // 1. OPEN PREVIEW (Transfer Data to Paper)
-    if (generatePdfBtn) {
-        generatePdfBtn.addEventListener('click', () => {
-            const nameInput = document.getElementById('studentName');
-            const deptInput = document.getElementById('studentDept');
+        // Loop through every course row to calculate and build PDF table
+        document.querySelectorAll('.course-row').forEach(row => {
+            const inputs = row.querySelectorAll('input');
             
-            // Validation
-            if (!nameInput.value.trim()) {
-                nameInput.style.borderColor = '#ff5252'; 
-                setTimeout(() => nameInput.style.borderColor = '#E0E0E0', 3000);
-                return;
-            } 
+            // Get Values
+            const code = inputs[0].value || "N/A";
+            const unit = parseFloat(inputs[1].value) || 0;
+            const grade = inputs[2] ? inputs[2].value.toUpperCase() : "-";
 
-            // -- FILL THE PAPER (DATA TRANSFER) --
-            document.getElementById('pdfName').innerText = nameInput.value;
-            document.getElementById('pdfDept').innerText = deptInput.value || "N/A";
-            document.getElementById('pdfDate').innerText = new Date().toLocaleString();
+            // Calculate Grade Point
+            let point = 0;
+            if (grade === 'A') point = isScale5 ? 5 : 4;
+            if (grade === 'B') point = isScale5 ? 4 : 3;
+            if (grade === 'C') point = isScale5 ? 3 : 2;
+            if (grade === 'D') point = isScale5 ? 2 : 1;
+            if (grade === 'E') point = isScale5 ? 1 : 0; 
+            if (grade === 'F') point = 0;
 
-            const prevUnits = parseFloat(document.getElementById('totalUnits').value) || 0;
-            const prevCgpa = parseFloat(document.getElementById('currentCgpa').value) || 0;
-            
-            let currentSemUnits = 0;
-            // Loop inputs to get total units
-            document.querySelectorAll('.course-row').forEach(row => {
-                 currentSemUnits += parseFloat(row.querySelectorAll('input')[1].value) || 0;
-            });
+            // Add to Semester Totals
+            semUnits += unit;
+            semPoints += (point * unit);
 
-            document.getElementById('pdfPrevCgpa').innerText = prevCgpa.toFixed(2);
-            document.getElementById('pdfPrevUnits').innerText = prevUnits;
-            document.getElementById('pdfSemGpa').innerText = document.getElementById('resultGpa').innerText;
-            document.getElementById('pdfSemUnits').innerText = currentSemUnits;
-            document.getElementById('pdfFinalCgpa').innerText = document.getElementById('resultCgpa').innerText;
-            document.getElementById('pdfTotalUnits').innerText = prevUnits + currentSemUnits;
-            document.getElementById('pdfClass').innerText = document.getElementById('resultClass').innerText.toUpperCase();
-
-            // Fill Table
-            const tableBody = document.getElementById('pdfCourseList');
-            tableBody.innerHTML = ''; 
-            const isScale5 = document.querySelector('.toggle-btn[data-value="5"]').classList.contains('active');
-            
-            document.querySelectorAll('.course-row').forEach(row => {
-                const inputs = row.querySelectorAll('input');
-                const code = inputs[0].value || "---";
-                const unit = inputs[1].value || "0";
-                const grade = inputs[2] ? inputs[2].value.toUpperCase() : "-";
-
-                let point = 0;
-                if (grade === 'A') point = isScale5 ? 5 : 4;
-                if (grade === 'B') point = isScale5 ? 4 : 3;
-                if (grade === 'C') point = isScale5 ? 3 : 2;
-                if (grade === 'D') point = isScale5 ? 2 : 1;
-                if (grade === 'E') point = isScale5 ? 1 : 0; 
-                if (grade === 'F') point = 0;
-
-                const tr = document.createElement('tr');
-                tr.innerHTML = `<td>${code.toUpperCase()}</td><td>${unit}</td><td>${grade}</td><td>${point}</td>`;
-                tableBody.appendChild(tr);
-            });
-
-            // -- SWITCH MODALS --
-            pdfModal.classList.remove('active'); // Close Input Modal
-            previewModal.classList.add('active'); // Open Preview Modal
+            // Add Row to PDF Table
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td style="text-align: left;">${code.toUpperCase()}</td>
+                <td style="text-align: center;">${unit}</td>
+                <td style="text-align: center;">${grade} (${point})</td>
+            `;
+            tableBody.appendChild(tr);
         });
-    }
 
-    // 2. CLOSE PREVIEW
-    if (closePreviewBtn) {
-        closePreviewBtn.addEventListener('click', () => {
-            previewModal.classList.remove('active');
-        });
-    }
+        // Calculate Semester GPA
+        const semGpa = semUnits === 0 ? 0 : (semPoints / semUnits);
 
-    // 3. FINAL PRINT ACTION (The Native Browser Print)
-    if (finalDownloadBtn) {
-        finalDownloadBtn.addEventListener('click', () => {
-            // This opens the phone/computer's native print menu
-            window.print(); 
-        });
-    }
+        // --- 3. CALCULATE CUMULATIVE (FINAL) ---
+        const totalUnits = prevUnits + semUnits;
+        const totalPoints = prevPoints + semPoints;
+        const finalCgpa = totalUnits === 0 ? 0 : (totalPoints / totalUnits);
 
+        // --- 4. DETERMINE CLASS OF DEGREE ---
+        let verdict = "FAIL / ADVICED TO WITHDRAW";
+        
+        if (isScale5) {
+            // 5.0 Scale Logic
+            if (finalCgpa >= 4.50) verdict = "FIRST CLASS HONOURS";
+            else if (finalCgpa >= 3.50) verdict = "SECOND CLASS UPPER";
+            else if (finalCgpa >= 2.40) verdict = "SECOND CLASS LOWER";
+            else if (finalCgpa >= 1.50) verdict = "THIRD CLASS";
+            else if (finalCgpa >= 1.00) verdict = "PASS";
+        } else {
+            // 4.0 Scale Logic
+            if (finalCgpa >= 3.50) verdict = "FIRST CLASS HONOURS";
+            else if (finalCgpa >= 3.00) verdict = "SECOND CLASS UPPER";
+            else if (finalCgpa >= 2.00) verdict = "SECOND CLASS LOWER";
+            else if (finalCgpa >= 1.00) verdict = "THIRD CLASS";
+        }
+
+        // --- 5. TRANSFER DATA TO PDF ---
+        
+        // Student Info
+        const nameVal = document.getElementById('studentName') ? document.getElementById('studentName').value : "";
+        const deptVal = document.getElementById('studentDept') ? document.getElementById('studentDept').value : "";
+        document.getElementById('pdfName').innerText = nameVal || "Student";
+        document.getElementById('pdfDept').innerText = deptVal || "N/A";
+
+        // Date
+        document.getElementById('pdfDate').innerText = new Date().toLocaleString();
+
+        // Previous Status
+        document.getElementById('pdfPrevCgpa').innerText = prevCgpa.toFixed(2);
+        document.getElementById('pdfPrevUnits').innerText = prevUnits;
+
+        // Current Semester
+        document.getElementById('pdfSemGpa').innerText = semGpa.toFixed(2);
+        document.getElementById('pdfSemUnits').innerText = semUnits;
+
+        // Cumulative Result
+        document.getElementById('pdfFinalCgpa').innerText = finalCgpa.toFixed(2);
+        document.getElementById('pdfTotalUnits').innerText = totalUnits;
+
+        // Class of Degree
+        document.getElementById('pdfClassDegree').innerText = verdict;
+
+        // --- 6. PRINT (Auto-Filename Logic) ---
+        
+        // A. Save the original title (e.g., "CGPA Calculator")
+        const originalTitle = document.title;
+        
+        // B. Change title to "StudentName_Result" (This becomes the filename!)
+        // If name is empty, it defaults to "Student_Result"
+        const fileName = nameVal ? nameVal + "_Result" : "Student_Result";
+        document.title = fileName;
+
+        // C. Open the Print Window
+        window.print();
+
+        // D. Change the title back after a short delay (so the user doesn't see it stuck)
+        setTimeout(() => {
+            document.title = originalTitle;
+        }, 1000);
+    });
+}
 }); // END OF DOMContentLoaded
+
+// ===============================================
+// DEVELOPMENT TOOL: AUTO-FILL (Ghost User)
+// Usage: Comment out or delete this section when you go live!
+// ===============================================
+
+window.addEventListener('DOMContentLoaded', () => {
+    
+    // 1. Fill Student Details
+    const nameBox = document.getElementById('studentName');
+    const deptBox = document.getElementById('studentDept');
+    
+    if(nameBox) nameBox.value = "Johnathan Doe";
+    if(deptBox) deptBox.value = "Software Engineering";
+
+    // 2. Fill Previous Stats (Dashboard)
+    const prevCgpa = document.getElementById('currentCgpa');
+    const prevUnits = document.getElementById('totalUnits');
+    
+    if(prevCgpa) prevCgpa.value = "4.25";
+    if(prevUnits) prevUnits.value = "64";
+
+    // 3. Create Dummy Courses (The Loop)
+    // We will add 5 courses automatically
+    const courses = [
+        { code: "MTH 101", unit: "4", grade: "A" },
+        { code: "CSC 201", unit: "3", grade: "B" },
+        { code: "GST 111", unit: "2", grade: "A" },
+        { code: "PHY 102", unit: "3", grade: "C" },
+        { code: "CHM 101", unit: "4", grade: "A" },
+        { code: "MTH 101", unit: "4", grade: "A" },
+        { code: "CSC 201", unit: "3", grade: "B" },
+        { code: "GST 111", unit: "2", grade: "A" },
+        { code: "PHY 102", unit: "3", grade: "C" },
+        { code: "CHM 101", unit: "4", grade: "A" },
+        { code: "MTH 101", unit: "4", grade: "A" },
+        { code: "CSC 201", unit: "3", grade: "B" },
+        { code: "GST 111", unit: "2", grade: "A" },
+        { code: "PHY 102", unit: "3", grade: "C" },
+        { code: "CHM 101", unit: "4", grade: "A" },
+        { code: "MTH 101", unit: "4", grade: "A" },
+        { code: "CSC 201", unit: "3", grade: "B" },
+        { code: "GST 111", unit: "2", grade: "A" },
+        { code: "PHY 102", unit: "3", grade: "C" },
+        { code: "CHM 101", unit: "4", grade: "A" },
+    ];
+
+    // Find the 'Add Course' button
+    const addBtn = document.getElementById('addCourseBtn');
+
+    if(addBtn) {
+        // Loop through our dummy data
+        courses.forEach((course, index) => {
+            // A. Click the "Add Course" button to create a row
+            addBtn.click();
+            
+            // B. Find the row we just created (it will be the last one)
+            const rows = document.querySelectorAll('.course-row');
+            const lastRow = rows[rows.length - 1];
+
+            if(lastRow) {
+                const inputs = lastRow.querySelectorAll('input');
+                const select = lastRow.querySelector('select'); // If you switch back to select later
+
+                // C. Fill the inputs
+                // Input 0: Course Code
+                if(inputs[0]) inputs[0].value = course.code;
+                
+                // Input 1: Units
+                if(inputs[1]) inputs[1].value = course.unit;
+                
+                // Input 2: Grade (Text input version)
+                if(inputs[2]) inputs[2].value = course.grade;
+            }
+        });
+    }
+
+    // Optional: Log to console so you know it ran
+    console.log("👻 Ghost User has auto-filled the form for testing.");
+});
