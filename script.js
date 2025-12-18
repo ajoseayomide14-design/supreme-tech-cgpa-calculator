@@ -321,14 +321,14 @@ if (calculateBtn) {
     // --- HELPER FUNCTION: Class of Degree ---
     function getClassOfDegree(cgpa, scale) {
         if (scale === 5) {
-            if (cgpa >= 4.50) return 'First Class';
+            if (cgpa >= 4.50) return 'First Class Honours';
             if (cgpa >= 3.50) return 'Second Class Upper';
             if (cgpa >= 2.50) return 'Second Class Lower';
             if (cgpa >= 1.50) return 'Third Class';
             if (cgpa >= 1.00) return 'Pass';
             return 'Fail';
         } else {
-            if (cgpa >= 3.50) return 'First Class';
+            if (cgpa >= 3.50) return 'First Class Honours';
             if (cgpa >= 3.00) return 'Second Class Upper';
             if (cgpa >= 2.00) return 'Second Class Lower';
             if (cgpa >= 1.00) return 'Third Class';
@@ -481,14 +481,32 @@ if (calculateBtn) {
     });
 
    // ==========================================
-// PART C: DIRECT PRINT LOGIC (Calculation Engine)
+// PART C: DIRECT PRINT LOGIC (With Validation)
 // ==========================================
 if (generatePdfBtn) {
     generatePdfBtn.addEventListener('click', () => {
+        // --- 0. VALIDATION CHECK ---
+        const nameInput = document.getElementById('studentName');
+        // Get value and remove extra spaces
+        const nameVal = nameInput ? nameInput.value.trim() : "";
+
+        // If name is empty, turn red and STOP.
+        if (!nameVal) {
+            if(nameInput) nameInput.style.border = "1px solid red";
+           
+           //removes border after 3secs
+            setTimeout(() => {
+            if(nameInput) nameInput.style.border = "1px solid #ccc";
+        }, 2000);
+            return; // Stops the code here. No PDF is generated.
+        } else {
+            // Reset border if valid
+            if(nameInput) nameInput.style.border = "1px solid #ccc"; 
+        }
+
         // --- 1. GET SETTINGS & PREVIOUS DATA ---
         const isScale5 = document.querySelector('.toggle-btn[data-value="5"]').classList.contains('active');
         
-        // Get Previous Inputs (Default to 0 if empty)
         const prevCgpaInput = document.getElementById('currentCgpa');
         const prevUnitsInput = document.getElementById('totalUnits');
         
@@ -496,48 +514,70 @@ if (generatePdfBtn) {
         let prevUnits = parseFloat(prevUnitsInput.value) || 0;
         let prevPoints = prevCgpa * prevUnits;
 
-        // --- 2. CALCULATE CURRENT SEMESTER ---
+        // --- 2. CALCULATE CURRENT SEMESTER (Enhanced Input Interpreter) ---
         let semUnits = 0;
         let semPoints = 0;
         const tableBody = document.getElementById('pdfCourseList');
-        tableBody.innerHTML = ''; // Clear old rows
+        tableBody.innerHTML = ''; 
 
-        // Loop through every course row to calculate and build PDF table
         document.querySelectorAll('.course-row').forEach(row => {
             const inputs = row.querySelectorAll('input');
             
-            // Get Values
+            // Get raw values
             const code = inputs[0].value || "N/A";
             const unit = parseFloat(inputs[1].value) || 0;
-            const grade = inputs[2] ? inputs[2].value.toUpperCase() : "-";
+            let rawGrade = inputs[2] ? inputs[2].value.trim().toUpperCase() : "-";
 
-            // Calculate Grade Point
-            let point = 0;
-            if (grade === 'A') point = isScale5 ? 5 : 4;
-            if (grade === 'B') point = isScale5 ? 4 : 3;
-            if (grade === 'C') point = isScale5 ? 3 : 2;
-            if (grade === 'D') point = isScale5 ? 2 : 1;
-            if (grade === 'E') point = isScale5 ? 1 : 0; 
-            if (grade === 'F') point = 0;
+            // --- THE NEW "INTERPRETER" LOGIC ---
+            // We define what "Grade A", "Grade B", etc. looks like based on the scale.
+            // Example: If Scale 5, an "A" is either "A" or "5".
+            
+            let finalLetter = "-"; // Default display letter
+            let point = 0;         // Default point value
+
+            if (isScale5) {
+                // --- 5.0 SCALE LOGIC ---
+                // Checks for Letter OR Number input
+                if (rawGrade === 'A' || rawGrade === '5') { finalLetter = 'A'; point = 5; }
+                else if (rawGrade === 'B' || rawGrade === '4') { finalLetter = 'B'; point = 4; }
+                else if (rawGrade === 'C' || rawGrade === '3') { finalLetter = 'C'; point = 3; }
+                else if (rawGrade === 'D' || rawGrade === '2') { finalLetter = 'D'; point = 2; }
+                else if (rawGrade === 'E' || rawGrade === '1') { finalLetter = 'E'; point = 1; }
+                else if (rawGrade === 'F' || rawGrade === '0') { finalLetter = 'F'; point = 0; }
+                else { 
+                    // If input is totally weird (like "Q" or "9"), keep it as is, points = 0
+                    finalLetter = rawGrade; point = 0; 
+                }
+            } else {
+                // --- 4.0 SCALE LOGIC ---
+                if (rawGrade === 'A' || rawGrade === '4') { finalLetter = 'A'; point = 4; }
+                else if (rawGrade === 'B' || rawGrade === '3') { finalLetter = 'B'; point = 3; }
+                else if (rawGrade === 'C' || rawGrade === '2') { finalLetter = 'C'; point = 2; }
+                else if (rawGrade === 'D' || rawGrade === '1') { finalLetter = 'D'; point = 1; }
+                else if (rawGrade === 'F' || rawGrade === '0') { finalLetter = 'F'; point = 0; }
+                else { finalLetter = rawGrade; point = 0; }
+            }
 
             // Add to Semester Totals
             semUnits += unit;
             semPoints += (point * unit);
 
             // Add Row to PDF Table
+            // NOW: We print 'finalLetter' (e.g., "A") and 'point' (e.g., 5)
+            // Result: "A (5)" even if user typed "5"
             const tr = document.createElement('tr');
             tr.innerHTML = `
                 <td style="text-align: left;">${code.toUpperCase()}</td>
                 <td style="text-align: center;">${unit}</td>
-                <td style="text-align: center;">${grade} (${point})</td>
+                <td style="text-align: center;">${finalLetter} (${point})</td>
             `;
             tableBody.appendChild(tr);
         });
 
-        // Calculate Semester GPA
         const semGpa = semUnits === 0 ? 0 : (semPoints / semUnits);
 
-        // --- 3. CALCULATE CUMULATIVE (FINAL) ---
+
+        // --- 3. CALCULATE CUMULATIVE ---
         const totalUnits = prevUnits + semUnits;
         const totalPoints = prevPoints + semPoints;
         const finalCgpa = totalUnits === 0 ? 0 : (totalPoints / totalUnits);
@@ -546,146 +586,38 @@ if (generatePdfBtn) {
         let verdict = "FAIL / ADVICED TO WITHDRAW";
         
         if (isScale5) {
-            // 5.0 Scale Logic
             if (finalCgpa >= 4.50) verdict = "FIRST CLASS HONOURS";
             else if (finalCgpa >= 3.50) verdict = "SECOND CLASS UPPER";
             else if (finalCgpa >= 2.40) verdict = "SECOND CLASS LOWER";
             else if (finalCgpa >= 1.50) verdict = "THIRD CLASS";
             else if (finalCgpa >= 1.00) verdict = "PASS";
         } else {
-            // 4.0 Scale Logic
             if (finalCgpa >= 3.50) verdict = "FIRST CLASS HONOURS";
             else if (finalCgpa >= 3.00) verdict = "SECOND CLASS UPPER";
             else if (finalCgpa >= 2.00) verdict = "SECOND CLASS LOWER";
             else if (finalCgpa >= 1.00) verdict = "THIRD CLASS";
         }
 
-        // --- 5. TRANSFER DATA TO PDF ---
-        
-        // Student Info
-        const nameVal = document.getElementById('studentName') ? document.getElementById('studentName').value : "";
+        // --- 5. TRANSFER DATA ---
         const deptVal = document.getElementById('studentDept') ? document.getElementById('studentDept').value : "";
-        document.getElementById('pdfName').innerText = nameVal || "Student";
+        document.getElementById('pdfName').innerText = nameVal; // We know nameVal exists now
         document.getElementById('pdfDept').innerText = deptVal || "N/A";
 
-        // Date
         document.getElementById('pdfDate').innerText = new Date().toLocaleString();
 
-        // Previous Status
         document.getElementById('pdfPrevCgpa').innerText = prevCgpa.toFixed(2);
         document.getElementById('pdfPrevUnits').innerText = prevUnits;
 
-        // Current Semester
         document.getElementById('pdfSemGpa').innerText = semGpa.toFixed(2);
         document.getElementById('pdfSemUnits').innerText = semUnits;
 
-        // Cumulative Result
         document.getElementById('pdfFinalCgpa').innerText = finalCgpa.toFixed(2);
         document.getElementById('pdfTotalUnits').innerText = totalUnits;
 
-        // Class of Degree
         document.getElementById('pdfClassDegree').innerText = verdict;
 
-        // --- 6. PRINT (with Delay for Filename Fix) ---
-        
-        // A. Save the original title
-        const originalTitle = document.title;
-        
-        // B. Set the new filename (Title)
-        const fileName = nameVal ? nameVal + "_Result" : "Student_Result";
-        document.title = fileName;
-
-        // C. WAIT 100ms before opening print window
-        // This gives the PC browser enough time to "see" the new name
-        setTimeout(() => {
-            window.print();
-
-            // D. Change the title back after printing starts
-            // We wait a bit longer (500ms) to ensure the print dialog caught the name
-            setTimeout(() => {
-                document.title = originalTitle;
-            }, 500);
-        }, 100);
+        // --- 6. PRINT ---
+        window.print();
     });
 }
 }); // END OF DOMContentLoaded
-
-// ===============================================
-// DEVELOPMENT TOOL: AUTO-FILL (Ghost User)
-// Usage: Comment out or delete this section when you go live!
-// ===============================================
-
-window.addEventListener('DOMContentLoaded', () => {
-    
-    // 1. Fill Student Details
-    const nameBox = document.getElementById('studentName');
-    const deptBox = document.getElementById('studentDept');
-    
-    if(nameBox) nameBox.value = "Johnathan Doe";
-    if(deptBox) deptBox.value = "Software Engineering";
-
-    // 2. Fill Previous Stats (Dashboard)
-    const prevCgpa = document.getElementById('currentCgpa');
-    const prevUnits = document.getElementById('totalUnits');
-    
-    if(prevCgpa) prevCgpa.value = "4.25";
-    if(prevUnits) prevUnits.value = "64";
-
-    // 3. Create Dummy Courses (The Loop)
-    // We will add 5 courses automatically
-    const courses = [
-        { code: "MTH 101", unit: "4", grade: "A" },
-        { code: "CSC 201", unit: "3", grade: "B" },
-        { code: "GST 111", unit: "2", grade: "A" },
-        { code: "PHY 102", unit: "3", grade: "C" },
-        { code: "CHM 101", unit: "4", grade: "A" },
-        { code: "MTH 101", unit: "4", grade: "A" },
-        { code: "CSC 201", unit: "3", grade: "B" },
-        { code: "GST 111", unit: "2", grade: "A" },
-        { code: "PHY 102", unit: "3", grade: "C" },
-        { code: "CHM 101", unit: "4", grade: "A" },
-        { code: "MTH 101", unit: "4", grade: "A" },
-        { code: "CSC 201", unit: "3", grade: "B" },
-        { code: "GST 111", unit: "2", grade: "A" },
-        { code: "PHY 102", unit: "3", grade: "C" },
-        { code: "CHM 101", unit: "4", grade: "A" },
-        { code: "MTH 101", unit: "4", grade: "A" },
-        { code: "CSC 201", unit: "3", grade: "B" },
-        { code: "GST 111", unit: "2", grade: "A" },
-        { code: "PHY 102", unit: "3", grade: "C" },
-        { code: "CHM 101", unit: "4", grade: "A" },
-    ];
-
-    // Find the 'Add Course' button
-    const addBtn = document.getElementById('addCourseBtn');
-
-    if(addBtn) {
-        // Loop through our dummy data
-        courses.forEach((course, index) => {
-            // A. Click the "Add Course" button to create a row
-            addBtn.click();
-            
-            // B. Find the row we just created (it will be the last one)
-            const rows = document.querySelectorAll('.course-row');
-            const lastRow = rows[rows.length - 1];
-
-            if(lastRow) {
-                const inputs = lastRow.querySelectorAll('input');
-                const select = lastRow.querySelector('select'); // If you switch back to select later
-
-                // C. Fill the inputs
-                // Input 0: Course Code
-                if(inputs[0]) inputs[0].value = course.code;
-                
-                // Input 1: Units
-                if(inputs[1]) inputs[1].value = course.unit;
-                
-                // Input 2: Grade (Text input version)
-                if(inputs[2]) inputs[2].value = course.grade;
-            }
-        });
-    }
-
-    // Optional: Log to console so you know it ran
-    console.log("👻 Ghost User has auto-filled the form for testing.");
-});

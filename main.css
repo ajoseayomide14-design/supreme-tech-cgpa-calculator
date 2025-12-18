@@ -1017,29 +1017,29 @@ button {
     margin: 5px 0;
 }
 
-/* --- PRINT PAGE LOGIC (Final Polish) --- */
+/* --- PRINT PAGE LOGIC (Fixed for Multi-Page Headers) --- */
 @media print {
-    /* 1. Page Setup */
     @page {
-        /* This hides the Browser Headers (Date, URL, Title, Page #) */
-        margin: 0; 
-        size: auto;
+        /* 1. PHYSICAL MARGINS: 
+           This puts 25mm of white space at the top of Page 1, Page 2, Page 3...
+           This fixes the "Header touching the edge" issue. */
+        margin-top: 25mm; 
+        margin-bottom: 0;
+        margin-left: 0;
+        margin-right: 0;
     }
 
-    /* 2. NUCLEAR OPTION: Hide everything on the website */
     body > *:not(#print-container) {
         display: none !important;
     }
 
-    /* 3. Reset Body */
     html, body {
         height: auto !important;
         overflow: visible !important;
         background: #fff !important;
-        margin: 0 !important; /* Ensure no extra browser margin */
+        margin: 0 !important;
     }
 
-    /* 4. Show and Position the Paper */
     #print-container {
         display: block !important;
         visibility: visible !important;
@@ -1050,14 +1050,13 @@ button {
         height: auto !important;
         overflow: visible !important;
         
-        /* THE SAFETY PADDING */
-        /* Since we removed the page margins to hide the date/url, */
-        /* we must add padding here so your text isn't cut off. */
-        padding: 40px; 
+        /* 2. CONTAINER PADDING:
+           Top is 0 (because @page handles the top margin now).
+           Sides/Bottom stay 40px to keep text away from the paper edges. */
+        padding: 0 40px 40px 40px; 
         box-sizing: border-box;
     }
     
-    /* Ensure all internals are visible */
     #print-container * {
         visibility: visible !important;
     }
