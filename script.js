@@ -586,23 +586,26 @@ if (generatePdfBtn) {
         // Class of Degree
         document.getElementById('pdfClassDegree').innerText = verdict;
 
-        // --- 6. PRINT (Auto-Filename Logic) ---
+        // --- 6. PRINT (with Delay for Filename Fix) ---
         
-        // A. Save the original title (e.g., "CGPA Calculator")
+        // A. Save the original title
         const originalTitle = document.title;
         
-        // B. Change title to "StudentName_Result" (This becomes the filename!)
-        // If name is empty, it defaults to "Student_Result"
+        // B. Set the new filename (Title)
         const fileName = nameVal ? nameVal + "_Result" : "Student_Result";
         document.title = fileName;
 
-        // C. Open the Print Window
-        window.print();
-
-        // D. Change the title back after a short delay (so the user doesn't see it stuck)
+        // C. WAIT 100ms before opening print window
+        // This gives the PC browser enough time to "see" the new name
         setTimeout(() => {
-            document.title = originalTitle;
-        }, 1000);
+            window.print();
+
+            // D. Change the title back after printing starts
+            // We wait a bit longer (500ms) to ensure the print dialog caught the name
+            setTimeout(() => {
+                document.title = originalTitle;
+            }, 500);
+        }, 100);
     });
 }
 }); // END OF DOMContentLoaded
