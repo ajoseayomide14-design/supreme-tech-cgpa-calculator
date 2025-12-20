@@ -869,6 +869,7 @@ button {
     font-size: 0.85rem;
     width: 260px; /* Fixed width */
     flex-shrink: 0;
+    white-space: nowrap;
 }
 
 .profile-row .value {
@@ -1024,7 +1025,7 @@ button {
            This puts 25mm of white space at the top of Page 1, Page 2, Page 3...
            This fixes the "Header touching the edge" issue. */
         margin-top: 25mm; 
-        margin-bottom: 0;
+        margin-bottom: 10mm;
         margin-left: 0;
         margin-right: 0;
     }
@@ -1053,7 +1054,7 @@ button {
         /* 2. CONTAINER PADDING:
            Top is 0 (because @page handles the top margin now).
            Sides/Bottom stay 40px to keep text away from the paper edges. */
-        padding: 0 40px 40px 40px; 
+        padding: 0 40px 0px 40px; 
         box-sizing: border-box;
     }
     
