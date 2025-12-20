@@ -639,7 +639,7 @@ window.addEventListener('load', function() {
 
     // 2. Click "Add Course" until we have 15 rows
     const addBtn = document.getElementById('addCourseBtn');
-    const targetCount = 15;
+    const targetCount = 40;
     
     if(addBtn) {
         // We run a small loop to click the button repeatedly
