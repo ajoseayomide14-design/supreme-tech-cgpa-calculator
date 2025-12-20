@@ -867,9 +867,8 @@ button {
     font-weight: 700;
     color: #000;
     font-size: 0.85rem;
-    width: 260px; /* Fixed width */
+    width: 45%; /* Fixed width */
     flex-shrink: 0;
-    white-space: nowrap;
 }
 
 .profile-row .value {
