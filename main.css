@@ -867,7 +867,7 @@ button {
     font-weight: 700;
     color: #000;
     font-size: 0.85rem;
-    width: 45%; /* Fixed width */
+    width: 40%; /* Fixed width */
     flex-shrink: 0;
 }
 
@@ -1053,7 +1053,7 @@ button {
         /* 2. CONTAINER PADDING:
            Top is 0 (because @page handles the top margin now).
            Sides/Bottom stay 40px to keep text away from the paper edges. */
-        padding: 0 40px 0px 40px; 
+        padding: 0 40px 40px 40px; 
         box-sizing: border-box;
     }
     

@@ -623,54 +623,64 @@ if (generatePdfBtn) {
 }); // END OF DOMContentLoaded
 
 
-// --- SUPREME TECH AUTOFILL (15 COURSES) ---
-(function() {
-    console.log("🚀 Starting Autofill...");
+// ==========================================
+// 🛠️ DEVELOPMENT ONLY: AUTO-FILL 15 COURSES
+// (Delete this entire section when you are ready to publish)
+// ==========================================
+window.addEventListener('load', function() {
+    console.log("⚠️ Test Mode Active: Auto-filling 15 courses...");
 
     // 1. Fill Previous Academic Stats
     const cgpaInput = document.getElementById('currentCgpa');
     const unitsInput = document.getElementById('totalUnits');
     
-    if(cgpaInput) cgpaInput.value = (Math.random() * (4.5 - 2.0) + 2.0).toFixed(2); // Random CGPA between 2.0 and 4.5
-    if(unitsInput) unitsInput.value = Math.floor(Math.random() * 60) + 20; // Random units
+    if(cgpaInput) cgpaInput.value = (Math.random() * (4.5 - 2.0) + 2.0).toFixed(2);
+    if(unitsInput) unitsInput.value = Math.floor(Math.random() * 60) + 20;
 
-    // 2. Expand Course List to 15 Rows
+    // 2. Click "Add Course" until we have 15 rows
     const addBtn = document.getElementById('addCourseBtn');
     const targetCount = 15;
     
-    // Count current rows so we don't add too many if you ran it twice
-    let currentRows = document.querySelectorAll('.course-row').length;
-    
-    // Click the button enough times to reach 15
-    for (let i = currentRows; i < targetCount; i++) {
-        if(addBtn) addBtn.click();
+    if(addBtn) {
+        // We run a small loop to click the button repeatedly
+        // We use a small interval to ensure the browser registers the clicks cleanly
+        let clicks = 0;
+        const clicker = setInterval(() => {
+            if (clicks >= targetCount) {
+                clearInterval(clicker);
+                fillRows(); // Once rows are created, fill them
+            } else {
+                addBtn.click();
+                clicks++;
+            }
+        }, 50); // Click every 50ms
     }
 
-    // 3. Populate Every Row
-    const rows = document.querySelectorAll('.course-row');
-    // Mix of grades to test your new "Input Interpreter" (A, 5, B, 4, etc.)
-    const grades = ['A', '5', 'B', '4', 'C', '3', 'D', '2', 'E', 'F']; 
-    
-    rows.forEach((row, index) => {
-        const inputs = row.querySelectorAll('input');
-        if(inputs.length >= 3) {
-            // Input 1: Course Code (e.g., CSC 101)
-            inputs[0].value = `TST ${100 + index + 1}`;
-            
-            // Input 2: Units (Random 1 to 5)
-            inputs[1].value = Math.floor(Math.random() * 5) + 1;
-            
-            // Input 3: Grade
-            inputs[2].value = grades[Math.floor(Math.random() * grades.length)];
-        }
-    });
+    // 3. Function to Fill the Rows with Data
+    function fillRows() {
+        const rows = document.querySelectorAll('.course-row');
+        // Mixing letters and numbers to test your Interpreter
+        const grades = ['A', '5', 'B', '4', 'C', '3', 'D', '2', 'E', 'F']; 
 
-    // 4. Pre-fill Student Details (for the PDF Modal)
-    const nameInput = document.getElementById('studentName');
-    const deptInput = document.getElementById('studentDept');
-    
-    if(nameInput) nameInput.value = "Supremo Tester";
-    if(deptInput) deptInput.value = "Systems Engineering";
+        rows.forEach((row, index) => {
+            const inputs = row.querySelectorAll('input');
+            if(inputs.length >= 3) {
+                // Course Code
+                inputs[0].value = `TEST ${101 + index}`;
+                // Units (1-4)
+                inputs[1].value = Math.floor(Math.random() * 4) + 1;
+                // Grade
+                inputs[2].value = grades[Math.floor(Math.random() * grades.length)];
+            }
+        });
 
-    console.log("✅ Ghost User has auto-filled 15 courses for testing.");
-})();
+        // 4. Fill Student Modal Details
+        const nameInput = document.getElementById('studentName');
+        const deptInput = document.getElementById('studentDept');
+        
+        if(nameInput) nameInput.value = "Supremo Tester (15 Courses)";
+        if(deptInput) deptInput.value = "Computer Science";
+        
+        console.log("✅ Auto-fill complete.");
+    }
+});
